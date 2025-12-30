@@ -22,8 +22,16 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col justify-center h-dvh gap-10 p-4">
-      <div className="flex flex-col items-center mb-10 sm:mb-20 gap-10">
+    <div className="flex flex-col justify-center h-dvh gap-10 p-4 min-h-screen w-full bg-white relative">
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: "#ffffff",
+          backgroundImage: "radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.35) 1px, transparent 0)",
+          backgroundSize: "20px 20px",
+        }}
+      />
+      <div className="z-10 flex flex-col items-center mb-10 sm:mb-20 gap-10">
         <div className="text-center flex flex-col gap-5">
           <Text className="block sm:hidden" as={"h2"}>Make Webpages Make Sense</Text>
           <Text className="hidden sm:block" as={"h1"}>Make Webpages Make Sense</Text>
