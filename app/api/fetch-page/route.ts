@@ -1,3 +1,4 @@
+import { extractReadableText } from "@/lib/extractReadableText"
 import { isValidUrl } from "@/lib/isValidUrl"
 import axios from "axios"
 import { NextResponse } from "next/server"
@@ -26,9 +27,18 @@ export async function POST(req:Request){
 
         const html = response.data
 
+        const result = extractReadableText(html,url)
+
+        if (!result) {
+            return NextResponse.json(
+                { error: "Could not extract readable content" },
+                { status: 422 }
+            )
+        }
+
         return NextResponse.json({
             success:true,
-            html,
+            result,
         })
     }catch (error){
         return NextResponse.json(
