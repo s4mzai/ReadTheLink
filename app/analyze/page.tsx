@@ -12,8 +12,12 @@ export default function Page(){
     const [ loading, setLoading ] = useState(false)
     const [error, setError] = useState("")
     const [html, setHtml] = useState("")
+    const router = useRouter()
+    
+    useEffect(()=>{
+        if(!url || !isValidUrl(url)) router.replace("/")
+    },[url,router])
 
-    if(!url || !isValidUrl(url)) redirect("/")
     
     useEffect(()=>{
         const fetchHtml = async ()=>{
@@ -45,7 +49,7 @@ export default function Page(){
                     <Text as={"h4"}>Fetching Html</Text>
                 )}
                 {error && (
-                    <Text as={"p"} className="text-red-500">There's a error fetching html</Text>
+                    <Text as={"p"} className="text-red-500">{error}</Text>
                 )}
                 {html && (
                     <div className="flex w-[50%] gap-5">
