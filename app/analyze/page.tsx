@@ -13,6 +13,7 @@ export default function Page(){
     const url = searchParams.get("url")
     const [ loading, setLoading ] = useState(false)
     const [error, setError] = useState("")
+    const [summaryError, setSummaryError] = useState("")
     const [ title, setTitle ] = useState("")
     const [ summary, setSummary ] = useState("")
     const [content, setContent] = useState("")
@@ -32,7 +33,6 @@ export default function Page(){
                 const result = res.data.result
 
                 setTitle(result.title)
-                // setSummary(result.excerpt)
                 setContent(result.content)
                 setContentLength(result.length)
             } catch{
@@ -43,6 +43,22 @@ export default function Page(){
         }
         fetchPage()
     },[url,router])
+    
+    let slicedContent = ""
+    const generateSummary = async () => {
+        if ( content.length > 8000 ){
+            slicedContent = content.slice(0,8000)
+        }
+        try{
+            setLoadingSummary(true)
+            const res = await axios.post("/api/summarize",{title,content:slicedContent || content})
+            setSummary(res.data.summary)
+        }catch{
+            setSummaryError("Failed to summarize page")
+        }finally{
+            setLoadingSummary(false)
+        }
+    }
     
 
     return(
@@ -90,9 +106,10 @@ export default function Page(){
                             </Card>
 
                         </div>
-                        <div className="sm:w-[40%] flex items-center justify-center">
+                        <div className="sm:w-[40%] flex items-center justify-center flex-col gap-5">
+                            {summaryError && <div className="text-red-500">{summaryError}</div>}
                             {summary && (
-                                <Card className="h-fit">
+                                <Card className="max-h-[400px] overflow-auto">
                                     <Card.Header>
                                         <Card.Title>Summary</Card.Title>
                                         <Card.Description className="leading-relaxed">
@@ -102,7 +119,16 @@ export default function Page(){
                                 </Card>
                             )} 
                             {!summary && (
-                                <Button disabled={loadingSummary} className="w-full sm:w-fit h-fit flex items-center justify-center">Summary!</Button>
+                                <Button 
+                                onClick={()=>generateSummary()}
+                                disabled={loadingSummary}
+                                className={`flex items-center justify-center w-full sm:w-fit h-fit${
+                                    loadingSummary
+                                      ? " cursor-not-allowed"
+                                      : ""
+                                }`}
+                            
+                                >{loadingSummary?"Generating Summary...":"Summary!"}</Button>
                             )}
                         </div>
                     </div>
