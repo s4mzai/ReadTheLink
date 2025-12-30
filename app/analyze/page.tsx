@@ -44,14 +44,12 @@ export default function Page(){
         fetchPage()
     },[url,router])
     
-    let slicedContent = ""
     const generateSummary = async () => {
-        if ( content.length > 8000 ){
-            slicedContent = content.slice(0,8000)
-        }
+        const contentToSend = content.length > 8000? content.slice(0,8000):content
         try{
+            setSummaryError("")
             setLoadingSummary(true)
-            const res = await axios.post("/api/summarize",{title,content:slicedContent || content})
+            const res = await axios.post("/api/summarize",{title,content:contentToSend})
             setSummary(res.data.summary)
         }catch{
             setSummaryError("Failed to summarize page")

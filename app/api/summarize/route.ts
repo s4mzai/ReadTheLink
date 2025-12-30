@@ -1,19 +1,19 @@
-import { extractReadableText } from "@/lib/extractReadableText"
-import { isValidUrl } from "@/lib/isValidUrl"
+
 import { GoogleGenAI } from "@google/genai"
-import axios from "axios"
 import { NextResponse } from "next/server"
 
 export async function POST(req:Request){
     const body = await req.json()
     const { title, content } = body
-    console.log(content || "no contnet")
+    
     if(!title || !content){ 
         return NextResponse.json(
             { error: "Title or Content is missing!" },
             { status: 400 }
         )
     }
+    const safeContent = content.length > 8000 ? content.slice(0, 8000) : content
+
     const prompt = `
     You are given the content of a webpage.
 
@@ -21,7 +21,7 @@ export async function POST(req:Request){
     ${title}
 
     Content:
-    ${content}
+    ${safeContent}
 
     Task:
     Write a clear, concise summary of this webpage in simple language.
