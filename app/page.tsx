@@ -31,7 +31,7 @@ export default function Home() {
           backgroundSize: "20px 20px",
         }}
       />
-      <div className="z-10 flex flex-col items-center mb-10 sm:mb-20 gap-10">
+      <div className="z-10 flex flex-col items-center gap-10">
         <div className="text-center flex flex-col gap-5">
           <Text className="block sm:hidden" as={"h2"}>Make <span className="w-fit p-2 inline-block font-head transition-all rounded outline-hidden cursor-pointer duration-200 font-medium flex items-center shadow-md hover:shadow active:shadow-none bg-primary text-primary-foreground border-2 border-black transition hover:translate-y-1 active:translate-y-2 active:translate-x-1 hover:bg-primary-hover"> Webpages</span> Make Sense</Text>
           <Text className="hidden sm:block" as={"h1"}>Make <span className="w-fit p-2 inline-block font-head transition-all rounded outline-hidden cursor-pointer duration-200 font-medium flex items-center shadow-md hover:shadow active:shadow-none bg-primary text-primary-foreground border-2 border-black transition hover:translate-y-1 active:translate-y-2 active:translate-x-1 hover:bg-primary-hover"> Webpages</span> Make Sense</Text>
