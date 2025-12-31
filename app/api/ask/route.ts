@@ -44,7 +44,7 @@ export async function POST(req:Request){
         
         return NextResponse.json({
             success: true,
-            summary: response.text,
+            answer: response.text,
         })
     }catch(error){
         return NextResponse.json(

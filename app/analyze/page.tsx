@@ -1,6 +1,7 @@
 "use client"
 import { Button } from "@/components/retroui/Button"
 import { Card } from "@/components/retroui/Card"
+import { Input } from "@/components/retroui/Input"
 import { Text } from "@/components/retroui/Text"
 import { isValidUrl } from "@/lib/isValidUrl"
 import axios from "axios"
@@ -19,6 +20,10 @@ export default function Page(){
     const [content, setContent] = useState("")
     const [ contentLength, setContentLength ] = useState<number>()
     const [ loadingSummary, setLoadingSummary ] = useState(false)
+    const [ question, setQuestion ] = useState("")
+    const [ answer, setAnswer ] = useState("")
+    const [ loadingAnswer, setLoadingAnswer ] = useState(false)
+    const [ answerError, setAnswerError ] = useState("")
     const router = useRouter()
     
     
@@ -55,6 +60,20 @@ export default function Page(){
             setSummaryError("Failed to summarize page")
         }finally{
             setLoadingSummary(false)
+        }
+    }
+
+    const askQuestion = async () => {
+        const contentToSend = content.length > 8000? content.slice(0,8000):content
+        try{
+            setAnswerError("")
+            setLoadingAnswer(true)
+            const res = await axios.post("/api/ask",{title,content:contentToSend,question})
+            setAnswer(res.data.answer)
+        }catch{
+            setAnswerError("Failed to Answer Question")
+        }finally{
+            setLoadingAnswer(false)
         }
     }
     
@@ -132,6 +151,55 @@ export default function Page(){
                         </div>
                     </div>
                 )}
+            </div>
+            <div className="flex min-h-dvh flex-col w-full bg-white items-center justify-evenly px-4">
+                <div className="flex gap-3 w-full sm:w-[600px]">
+                    <div className="flex-1">
+                        <Input
+                        value={question}
+                        disabled={loadingAnswer}
+                        type="text"
+                        placeholder="Question goes here...."
+                        onChange={(e) => {
+                            setQuestion(e.target.value)
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") askQuestion()
+                        }}
+                        className="bg-white"
+                        />
+                    </div>
+
+                    <Button
+                        type="button"
+                        onClick={askQuestion}
+                        disabled={loadingAnswer}
+                        className={`flex items-center bg-white justify-center text-center${
+                        loadingAnswer
+                            ? " cursor-not-allowed"
+                            : ""
+                        }`}
+                    >
+                        {loadingAnswer?"Thinking...":"Ask!"}
+                    </Button>
+                </div>
+                <div className="gap-6 flex flex-col w-full sm:w-[60%]">
+                    <Card>
+                        <Card.Header>
+                            <Card.Title>Answer</Card.Title>
+                        </Card.Header>
+                        <div className="px-6 pb-6">
+                            <div className="max-h-[250px] overflow-auto">
+                                <p className={`whitespace-pre-line text-sm leading-relaxed ${!loadingAnswer && !answer?"text-red-500":""}`}>
+                                    {loadingAnswer && "Thinking..."}
+                                    {!loadingAnswer && !answer && "Ask a Question for Answer!!!" }
+                                    {answer && `${answer}`}
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+                
             </div>
 
         </div>
