@@ -60,7 +60,7 @@ export default function Page(){
     
 
     return(
-        <div className="flex flex-col items-center justify-center pt-20 w-full gap-5 py-10 ">
+        <div className={`flex flex-col items-center justify-center ${loading? "pt-0": "pt-20"} w-full gap-5 py-10 min-h-dvh bg-[#ffdb33] `}>
             <div className="flex gap-2 items-center">
                 <Text as="h5">Url:</Text>
                 <Text as={"p"}>{url}</Text>
@@ -118,9 +118,10 @@ export default function Page(){
                             )} 
                             {!summary && (
                                 <Button 
+                                variant={"outline"}
                                 onClick={()=>generateSummary()}
                                 disabled={loadingSummary}
-                                className={`flex items-center justify-center w-full sm:w-fit h-fit${
+                                className={`flex items-center bg-white justify-center w-full sm:w-fit h-fit${
                                     loadingSummary
                                       ? " cursor-not-allowed"
                                       : ""

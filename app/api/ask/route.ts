@@ -1,18 +1,19 @@
-
 import { GoogleGenAI } from "@google/genai"
 import { NextResponse } from "next/server"
 
+
 export async function POST(req:Request){
     const body = await req.json()
-    const { title, content } = body
-    
-    if(!title || !content){ 
+    const { title, content, question } = body
+
+    if (!title || !content || !question ){
         return NextResponse.json(
-            { error: "Title or Content is missing!" },
+            { error: "Somethings missing!" },
             { status: 400 }
         )
     }
-    const safeContent = content.length > 8000 ? content.slice(0, 8000) : content
+
+    const safeContent = content.length > 8000 ? content.slice(0,8000) : content
 
     const prompt = `
     You are given the content of a webpage.
@@ -23,32 +24,32 @@ export async function POST(req:Request){
     Content:
     ${safeContent}
 
-    Task:
-    Write a clear, concise summary of this webpage in simple language.
-    Focus only on what is explicitly stated in the content.
-    Do not add external information.
-    Do not speculate.
+    Question:
+    ${question}
 
-    Summary:
+    Instructions:
+    Answer the question using ONLY the content above.
+    If the answer is not explicitly present in the content, respond with:
+    "Not mentioned in the page."
 
+    Answer:
     `
+
     try{
-
-        const ai = new GoogleGenAI({});
-
+        const ai = new GoogleGenAI({})
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
         });
-
+        
         return NextResponse.json({
-            success:true,
+            success: true,
             summary: response.text,
         })
     }catch(error){
         return NextResponse.json(
-            { error: "Failed to summarize page" },
-            { status: 500 } 
+            { error: "Failed to Answer Question"},
+            { status: 500 }
         )
     }
 }
