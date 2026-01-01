@@ -11,6 +11,7 @@ export function usePageContent(url: string | null) {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [contentLength, setContentLength] = useState<number>()
+  const [chunks, setChunks] = useState<string[]>([])
 
   useEffect(() => {
     if (!url || !isValidUrl(url)) {
@@ -27,6 +28,7 @@ export function usePageContent(url: string | null) {
         setTitle(result.title)
         setContent(result.content)
         setContentLength(result.length)
+        setChunks(res.data.chunks)
       } catch {
         setError("Failed to fetch page")
       } finally {
@@ -43,5 +45,6 @@ export function usePageContent(url: string | null) {
     title,
     content,
     contentLength,
+    chunks,
   }
 }

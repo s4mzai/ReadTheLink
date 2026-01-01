@@ -23,6 +23,7 @@ export default function AnalyzePage() {
     title,
     content,
     contentLength,
+    chunks,
   } = usePageContent(url)
 
   const {
@@ -63,6 +64,7 @@ export default function AnalyzePage() {
         <>
           <div className="flex flex-col sm:flex-row gap-6 w-full px-4 max-w-7xl mx-auto">
             <div className="flex flex-col gap-6 w-full sm:w-[60%]">
+              <div>This page was split into {chunks.length} chunks</div>
               <PageContent
                 title={title}
                 content={content}
