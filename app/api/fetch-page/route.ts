@@ -1,3 +1,4 @@
+import { chunkText } from "@/lib/chunkText"
 import { extractReadableText } from "@/lib/extractReadableText"
 import { isValidUrl } from "@/lib/isValidUrl"
 import axios from "axios"
@@ -36,9 +37,13 @@ export async function POST(req:Request){
             )
         }
 
+        const chunks = chunkText(result.content || "")
+        console.log(chunks)
+
         return NextResponse.json({
             success:true,
             result,
+            chunks,
         })
     }catch (error){
         return NextResponse.json(
