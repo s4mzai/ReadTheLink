@@ -40,7 +40,7 @@ export default function AnalyzeClient() {
     loading: loadingAnswer,
     error: answerError,
     askQuestion,
-  } = useQuestionAnswer(title, content)
+  } = useQuestionAnswer(chunks)
 
   return (
     <div className="flex flex-col w-full min-h-dvh gap-10 py-10 items-center">

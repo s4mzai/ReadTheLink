@@ -38,7 +38,6 @@ export async function POST(req:Request){
         }
 
         const chunks = chunkText(result.content || "")
-        console.log(chunks)
 
         return NextResponse.json({
             success:true,

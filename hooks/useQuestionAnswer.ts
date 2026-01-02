@@ -1,7 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 
-export function useQuestionAnswer(title: string, content: string) {
+export function useQuestionAnswer(chunks: string[]) {
   const [question, setQuestion] = useState("")
   const [answer, setAnswer] = useState("")
   const [loading, setLoading] = useState(false)
@@ -10,8 +10,10 @@ export function useQuestionAnswer(title: string, content: string) {
   const askQuestion = async () => {
     if (!question.trim()) return
 
-    const contentToSend =
-      content.length > 8000 ? content.slice(0, 8000) : content
+    if (!chunks || chunks.length === 0) {
+      setError("No page content available")
+      return
+    }
 
     try {
       setError("")
@@ -19,9 +21,8 @@ export function useQuestionAnswer(title: string, content: string) {
       setLoading(true)
 
       const res = await axios.post("/api/ask", {
-        title,
-        content: contentToSend,
         question,
+        chunks
       })
 
       setAnswer(res.data.answer)
