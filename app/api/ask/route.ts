@@ -19,7 +19,13 @@ export async function POST(req:Request){
     const body = (await req.json()) as AskRequestBody
     const { question, chunks } = body
 
-    if (!question.trim()) return
+    if (!question.trim()) {
+        return NextResponse.json(
+          { error: "Question is empty" },
+          { status: 400 }
+        )
+    }
+      
 
     if (!question || !chunks || chunks.length === 0){
         return NextResponse.json(
@@ -53,9 +59,10 @@ export async function POST(req:Request){
         score: cosineSimilarity(questionEmbedding, chunk.embedding),
     }))
 
+    const sorted = scored.sort((a, b) => b.score - a.score)
+
     console.log(
-        scored
-          .sort((a, b) => b.score - a.score)
+        sorted
           .slice(0, 3)
           .map((c, i) => ({
             rank: i + 1,
@@ -64,13 +71,15 @@ export async function POST(req:Request){
         }))
     )
 
+    const topScore = sorted[0]?.score ?? 0
+    if (topScore < 0.55) {
+        return NextResponse.json({
+          success: true,
+          answer: "Not mentioned in the page.",
+        })
+    }
 
-    const topChunks = scored
-        .sort((a: {score: number}, b: {score: number}) => b.score - a.score)
-        .slice(0, 3)
-        .map((c: {text: string}) => c.text)
-
-        
+    const topChunks = sorted.slice(0, 3).map(c => c.text)
     const context = topChunks.join("\n\n---\n\n")
 
     const prompt = `
@@ -92,7 +101,7 @@ export async function POST(req:Request){
 
 
     try{
-        const ai = new GoogleGenAI({})
+        const ai = new GoogleGenAI({})  
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
