@@ -1,7 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 
-export function useQuestionAnswer(chunks: string[]) {
+export function useQuestionAnswer(chunks: string[], url:string | null) {
   const [question, setQuestion] = useState("")
   const [answer, setAnswer] = useState("")
   const [loading, setLoading] = useState(false)
@@ -22,7 +22,8 @@ export function useQuestionAnswer(chunks: string[]) {
 
       const res = await axios.post("/api/ask", {
         question,
-        chunks
+        chunks,
+        url
       })
 
       setAnswer(res.data.answer)
