@@ -8,5 +8,5 @@ export async function embedChunks(chunks: string[]) {
     contents: chunks,
   })
 
-  return response.embeddings?.map(e => e.values) ?? []
+  return response.embeddings?.map(e => e.values).filter((e): e is number[] => e !== undefined) ?? []
 }
