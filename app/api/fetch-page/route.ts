@@ -64,11 +64,21 @@ export async function POST(req:Request){
             success:true,
             result,
         })
-    }catch (error){
+    }catch (error:any){
+
+        if(error.response?.status === 403){
+            console.log(error)
+            return NextResponse.json(
+                {error: "This website blocks automated access. try refreshing it several times."},
+                {status: 403}
+            )
+        }
         console.log(error)
         return NextResponse.json(
             { error: "Failed to fetch page" },
             { status: 500 } 
         )
     }
+
+    
 }

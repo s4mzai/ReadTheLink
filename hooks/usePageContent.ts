@@ -29,8 +29,9 @@ export function usePageContent(url: string | null) {
         setContent(result.content)
         setContentLength(result.length)
         setChunks(result.chunks)
-      } catch {
-        setError("Failed to fetch page")
+      } catch(error:any) {
+        console.log(error.response)
+        setError(error.response?.data?.error || "Failed to fetch page")
       } finally {
         setLoading(false)
       }
