@@ -1,6 +1,7 @@
 import { chunkText } from "@/lib/chunkText"
 import { extractReadableText } from "@/lib/extractReadableText"
 import { isValidUrl } from "@/lib/isValidUrl"
+import { getCachedPage, setCachedPage } from "@/lib/pageCache"
 import axios from "axios"
 import { NextResponse } from "next/server"
 
@@ -15,7 +16,17 @@ export async function POST(req:Request){
                 { status: 400 }
             )
         }
-        
+
+        const cached = getCachedPage(url)
+        if(cached){
+            console.log("Using cached page")
+            return NextResponse.json({
+                success: true,
+                result: cached,
+            })
+        }
+
+
         const response = await axios.get(url, {
             headers: {
               "User-Agent":
@@ -28,23 +39,33 @@ export async function POST(req:Request){
 
         const html = response.data
 
-        const result = extractReadableText(html,url)
+        const extracted = extractReadableText(html,url)
 
-        if (!result) {
+        if (!extracted) {
             return NextResponse.json(
                 { error: "Could not extract readable content" },
                 { status: 422 }
             )
         }
 
-        const chunks = chunkText(result.content || "")
+        const chunks = chunkText(extracted.content || "")
+
+        const result = {
+            title: extracted.title || "",
+            content: extracted.content || "",
+            length: extracted.length || 0,
+            chunks,
+        }
+
+        setCachedPage(url,result)
+        console.log("Fetched and cached page")
 
         return NextResponse.json({
             success:true,
             result,
-            chunks,
         })
     }catch (error){
+        console.log(error)
         return NextResponse.json(
             { error: "Failed to fetch page" },
             { status: 500 } 
