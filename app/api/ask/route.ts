@@ -93,7 +93,7 @@ export async function POST(req: Request) {
     if (topScore < SIMILARITY_THRESHOLD) {
       return NextResponse.json({
         success: true,
-        answer: "Not mentioned in the page.",
+        answer: "This information isn't mentioned in the page. Try rephrasing your question or asking about something else that might be covered.",
       })
     }
 
@@ -114,7 +114,7 @@ ${question}
 Instructions:
 Answer using ONLY the context above.
 If the answer is not present, say:
-"Not mentioned in the page."
+"This information isn't mentioned in the page. Try rephrasing your question or asking about something else that might be covered."
 
 Answer:
 `
